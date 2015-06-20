@@ -19,4 +19,5 @@ setup(name='pcalg',
           'Programming Language :: Python :: 2.7',
           'Topic :: Scientific/Engineering :: Information Analysis',
           'Topic :: Software Development :: Libraries :: Python Modules'],
+      license='BSD License',
      )

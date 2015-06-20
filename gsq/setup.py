@@ -18,4 +18,5 @@ setup(name='gsq',
           'Programming Language :: Python :: 2.7',
           'Topic :: Scientific/Engineering :: Information Analysis',
           'Topic :: Software Development :: Libraries :: Python Modules'],
+      license='GNU General Public License v2 or later (GPLv2+)',
      )
