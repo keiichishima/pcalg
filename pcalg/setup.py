@@ -7,7 +7,7 @@ setup(name='pcalg',
       description='Estimate a DAG using the pc algorithm',
       author='Keiichi SHIMA',
       author_email='keiichi@iijlab.net',
-      packages=['pcalg'],
+      py_modules=['pcalg'],
       requires=['networkx (>=1.9.1)', 'pygraphviz (>=1.2)',
                 'gsq (>=0.1b1)'],
       classifiers=[
