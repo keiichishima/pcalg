@@ -155,7 +155,7 @@ def g_square_bin(x, y, s, dm):
 if __name__ == '__main__':
     import gsq_testdata
 
-    dm = np.array([testdata.bin_data]).reshape((5000,5))
+    dm = np.array([gsq_testdata.bin_data]).reshape((5000,5))
     x = 0
     y = 1
 
