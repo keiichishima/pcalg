@@ -23,6 +23,16 @@ import numpy as np
 _logger = logging.getLogger(__name__)
 
 def g_square_dis(x, y, s, levels, dm):
+    """G square test for discrete data.
+
+    @param x: the first node (as an integer).
+    @param y: the second node (as an integer).
+    @param s: the set of neibouring nodes of x and y (as a set()).
+    @param levels: levels of each column in the data matrix.
+    @param dm: the data matrix to be used (as a numpy.ndarray).
+    @return p: the probability of conditional independence.
+    """
+
     def _calculate_tlog(x, y, s, dof, levels, dm):
         prod_levels = np.prod(map(lambda x: levels[x], s))
         nijk = np.zeros((levels[x], levels[y], prod_levels))

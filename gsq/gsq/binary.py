@@ -24,12 +24,13 @@ import numpy as np
 _logger = logging.getLogger(__name__)
 
 def g_square_bin(x, y, s, dm):
-    """G square test for a binary data
+    """G square test for a binary data.
 
-    x:  the first node (as an integer).
-    y:  the second node (as an integer).
-    s:  the set of neibouring nodes of x and y (as a list of integers).
-    dm: the sufficient statistics (as a numpy.ndarray)
+    @param x: the first node (as an integer).
+    @param y: the second node (as an integer).
+    @param s: the set of neibouring nodes of x and y (as a set()).
+    @param dm: the data matrix to be used (as a numpy.ndarray).
+    @return p: the probability of conditional independence.
     """
 
     def _calculate_tlog(x, y, s, dof, dm):
