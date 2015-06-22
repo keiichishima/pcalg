@@ -39,8 +39,7 @@ def estimate_skeleton(suff_stat, indep_test_func, alpha, max_reach=None):
     @param suff_stat: the sufficient statistics (as a numpy.ndarray).
     @param indep_test_func: the function name for a conditional
       independency test.
-    @param alpha: the threshold value of probability of calculated by
-      indep_test_func.
+    @param alpha: the significance level.
     @return g: a skeleton graph (as a networkx.Graph).
     @return sep_set: a separation set (An 2D-array of set()).
     """
