@@ -7,7 +7,7 @@ setup(name='gsq',
       description='G square test function',
       author='Keiichi SHIMA',
       author_email='keiichi@iijlab.net',
-      py_modules=['gsq'],
+      packages=['gsq'],
       requires=['scipy (>=0.15.1)','numpy (>=1.9.2)'],
       classifiers=[
           'Development Status :: 4 - Beta',

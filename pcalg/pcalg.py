@@ -33,20 +33,23 @@ def _create_complete_graph(node_ids):
         pass
     return g
 
-def estimate_skeleton(suff_stat, indep_test_func, alpha, max_reach=None):
+def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
     """Estimate a skeleton graph from the statistis information.
 
-    @param suff_stat: the sufficient statistics (as a numpy.ndarray).
     @param indep_test_func: the function name for a conditional
       independency test.
+    @param data_matrix: data (as a numpy array).
+      other values may be specified depending on indep_test_func()s.
     @param alpha: the significance level.
+    @param kwargs: other parameters may be passed depending on the
+      indep_test_func()s.
     @return g: a skeleton graph (as a networkx.Graph).
     @return sep_set: a separation set (An 2D-array of set()).
     """
-    node_ids = range(suff_stat.shape[1])
+    node_ids = range(data_matrix.shape[1])
     g = _create_complete_graph(node_ids)
 
-    node_size = suff_stat.shape[1]
+    node_size = data_matrix.shape[1]
     sep_set = [[set() for i in range(node_size)] for j in range(node_size)]
 
     l = 1
@@ -67,7 +70,7 @@ def estimate_skeleton(suff_stat, indep_test_func, alpha, max_reach=None):
                 for k in combinations(adj_i, l):
                     _logger.debug('indep prob of %s and %s with subset %s'
                                   % (i, j, str(k)))
-                    prob = indep_test_func(i, j, set(k), suff_stat)
+                    prob = indep_test_func(data_matrix, i, j, set(k), **kwargs)
                     _logger.debug('prob is %s' % str(prob))
                     if prob > alpha:
                         if g.has_edge(i, j):
@@ -84,7 +87,7 @@ def estimate_skeleton(suff_stat, indep_test_func, alpha, max_reach=None):
         l += 1
         if cont is False:
             break
-        if (max_reach is not None) and (l > max_reach):
+        if ('max_reach' in kwargs) and (l > kwargs['max_reach']):
             break
         pass
 
