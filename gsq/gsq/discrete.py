@@ -27,6 +27,10 @@ def g_square_dis(x, y, s, levels, dm):
         prod_levels = np.prod(map(lambda x: levels[x], s))
         nijk = np.zeros((levels[x], levels[y], prod_levels))
         s_size = len(s)
+        z = []
+        for z_index in range(s_size):
+            z.append(s.pop())
+            pass
         for row_index in range(dm.shape[0]):
             i = dm[row_index, x]
             j = dm[row_index, y]
@@ -34,10 +38,10 @@ def g_square_dis(x, y, s, levels, dm):
             k_index = 0
             for s_index in range(s_size):
                 if s_index == 0:
-                    k_index += dm[row_index, s[s_index]]
+                    k_index += dm[row_index, z[s_index]]
                 else:
-                    lprod = np.prod(map(lambda x: levels[x], s[:s_index]))
-                    k_index += (dm[row_index, s[s_index]] * lprod)
+                    lprod = np.prod(map(lambda x: levels[x], z[:s_index]))
+                    k_index += (dm[row_index, z[s_index]] * lprod)
                     pass
                 pass
             nijk[i, j, k_index] += 1
