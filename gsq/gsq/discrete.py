@@ -153,6 +153,8 @@ def g_square_dis(x, y, s, levels, dm):
 
 
 if __name__ == '__main__':
+    from math import frexp
+
     import gsq_testdata
 
     dm = np.array([gsq_testdata.dis_data]).reshape((10000,5))
@@ -164,7 +166,12 @@ if __name__ == '__main__':
         print('x =', x, ', y =', y, ', s =', sets[idx], end='')
         p = g_square_dis(0, 1, set(sets[idx]), [3,2,3,4,2], dm)
         print(', p =', p, end='')
-        if round(p - gsq_testdata.dis_answer[idx], 7) == 0:
-            print(', => GOOD')
+        fr_p = frexp(p)
+        fr_a = frexp(gsq_testdata.dis_answer[idx])
+        if (round(fr_p[0] - fr_a[0], 7) == 0
+            and fr_p[1] == fr_a[1]):
+            print(' => GOOD')
         else:
-            print(', => WRONG')
+            print(' => WRONG')
+            print('p =', fr_p)
+            print('a =', fr_a)

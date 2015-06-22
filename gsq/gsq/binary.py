@@ -153,13 +153,25 @@ def g_square_bin(x, y, s, dm):
 
 
 if __name__ == '__main__':
+    from math import frexp
+
     import gsq_testdata
 
     dm = np.array([gsq_testdata.bin_data]).reshape((5000,5))
     x = 0
     y = 1
 
-    for s in ([], [2], [2, 3], [3, 4], [2, 3, 4]):
-        print('x =', x, ', y =', y, ', s =', s, end='')
-        p = g_square_bin(x, y, s, dm)
-        print(', p =', p)
+    sets = [[], [2], [2, 3], [3, 4], [2, 3, 4]]
+    for idx in range(len(sets)):
+        print('x =', x, ', y =', y, ', s =', sets[idx], end='')
+        p = g_square_bin(0, 1, set(sets[idx]), dm)
+        print(', p =', p, end='')
+        fr_p = frexp(p)
+        fr_a = frexp(gsq_testdata.bin_answer[idx])
+        if (round(fr_p[0] - fr_a[0], 7) == 0
+            and fr_p[1] == fr_a[1]):
+            print(' => GOOD')
+        else:
+            print(' => WRONG')
+            print('p =', fr_p)
+            print('a =', fr_a)
