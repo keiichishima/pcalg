@@ -155,11 +155,16 @@ def g_square_dis(x, y, s, levels, dm):
 if __name__ == '__main__':
     import gsq_testdata
 
-    _logger.setLevel(logging.DEBUG)
-    _console_handler = logging.StreamHandler()
-    _logger.setLevel(logging.DEBUG)
-    _logger.addHandler(_console_handler)
-
     dm = np.array([gsq_testdata.dis_data]).reshape((10000,5))
+    x = 0
+    y = 1
 
-    g_square_dis(0, 1, [2,3], [3,2,3,4,2], dm)
+    sets = [[], [2], [2, 3], [3, 4], [2, 3, 4]]
+    for idx in range(len(sets)):
+        print('x =', x, ', y =', y, ', s =', sets[idx], end='')
+        p = g_square_dis(0, 1, set(sets[idx]), [3,2,3,4,2], dm)
+        print(', p =', p, end='')
+        if round(p - gsq_testdata.dis_answer[idx], 7) == 0:
+            print(', => GOOD')
+        else:
+            print(', => WRONG')
