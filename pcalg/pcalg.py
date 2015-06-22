@@ -9,7 +9,7 @@ A graph generator based on the PC algorithm [Kalisch2007].
 high-dimensional directed acyclic graphs with the pc-algorithm. In The
 Journal of Machine Learning Research, Vol. 8, pp. 613-636, 2007.
 
-License: GPLv2
+License: BSD
 
 """
 

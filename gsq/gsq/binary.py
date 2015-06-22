@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""@package gsq
+"""@module binary
 
-A collection of G square test functions.
+A conditional independency test function for binary data.
 
 The code included in this package is logically copied and pasted from
 the pcalg package for R developed by Markus Kalisch, Alain Hauser,
