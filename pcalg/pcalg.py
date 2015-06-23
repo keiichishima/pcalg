@@ -130,7 +130,7 @@ def estimate_cpdag(skel_graph, sep_set):
                     dag.remove_edge(k, i)
                     pass
                 if dag.has_edge(k, j):
-                    _logger.debug('S: remove edge (%s, %s)' % (k, i))
+                    _logger.debug('S: remove edge (%s, %s)' % (k, j))
                     dag.remove_edge(k, j)
                     pass
                 pass
