@@ -1,10 +1,19 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 from distutils.core import setup
+try:
+    from pypandoc import convert
+    read_md = lambda f: convert(f, 'rst')
+except ImportError:
+    print('pandoc is not installed.')
+    read_md = lambda f: open(f, 'r').read()
 
 setup(name='gsq',
-      version='0.1b1',
-      description='G square test function',
+      version='0.1',
+      description='G Square Conditional Independence Test',
+      long_description=read_md('README.md'),
       author='Keiichi SHIMA',
       author_email='keiichi@iijlab.net',
       packages=['gsq'],

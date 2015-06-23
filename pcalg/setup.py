@@ -1,15 +1,23 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 from distutils.core import setup
+try:
+    from pypandoc import convert
+    read_md = lambda f: convert(f, 'rst')
+except ImportError:
+    print('pandoc is not installed.')
+    read_md = lambda f: open(f, 'r').read()
 
 setup(name='pcalg',
-      version='0.1b1',
-      description='Estimate a DAG using the pc algorithm',
+      version='0.1',
+      description='CPDAG Estimation using PC-Algorithm',
+      long_description=read_md('README.md'),
       author='Keiichi SHIMA',
       author_email='keiichi@iijlab.net',
       py_modules=['pcalg'],
-      requires=['networkx (>=1.9.1)', 'pygraphviz (>=1.2)',
-                'gsq (>=0.1b1)'],
+      requires=['networkx (>=1.9.1)', 'gsq (>=0.1)'],
       classifiers=[
           'Development Status :: 4 - Beta',
           'Environment :: Console',
