@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""@module discrete
-
-A conditional independency test function for discrete data.
+"""A conditional independency test function for discrete data.
 
 The code included in this package is logically copied and pasted from
 the pcalg package for R developed by Markus Kalisch, Alain Hauser,
@@ -25,12 +23,16 @@ _logger = logging.getLogger(__name__)
 def g_square_dis(x, y, s, levels, dm):
     """G square test for discrete data.
 
-    @param x: the first node (as an integer).
-    @param y: the second node (as an integer).
-    @param s: the set of neibouring nodes of x and y (as a set()).
-    @param levels: levels of each column in the data matrix.
-    @param dm: the data matrix to be used (as a numpy.ndarray).
-    @return p: the probability of conditional independence.
+    Args:
+        x: the first node (as an integer).
+        y: the second node (as an integer).
+        s: the set of neibouring nodes of x and y (as a set()).
+        levels: levels of each column in the data matrix
+            (as a list()).
+        dm: the data matrix to be used (as a numpy.ndarray).
+
+    Returns:
+        p_val: the p-value of conditional independence.
     """
 
     def _calculate_tlog(x, y, s, dof, levels, dm):
@@ -157,9 +159,9 @@ def g_square_dis(x, y, s, levels, dm):
     _logger.debug('tlog = %s' % tlog)
     _logger.debug('log(tlog) = %s' % log_tlog)
     _logger.debug('G2 = %f' % G2)
-    ret = chi2.sf(G2, dof)
-    _logger.info('probability = %s' % str(ret))
-    return ret
+    p_val = chi2.sf(G2, dof)
+    _logger.info('p_val = %s' % str(p_val))
+    return p_val
 
 
 if __name__ == '__main__':

@@ -1,9 +1,7 @@
-"""@module gsq_testdata
-
-The data included in this file is the same data distributed with the
-pcalg package for R developed by Markus Kalisch, Alain Hauser, Martin
-Maechler, Diego Colombo, Doris Entner, Patrik Hoyer, Antti Hyttinen,
-and Jonas Peters.
+"""The data included in this file is the same data distributed with
+the pcalg package for R developed by Markus Kalisch, Alain Hauser,
+Martin Maechler, Diego Colombo, Doris Entner, Patrik Hoyer, Antti
+Hyttinen, and Jonas Peters.
 
 License: GPLv2.
 """

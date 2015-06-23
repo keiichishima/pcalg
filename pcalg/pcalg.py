@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""@package graph
-
-A graph generator based on the PC algorithm [Kalisch2007].
+"""A graph generator based on the PC algorithm [Kalisch2007].
 
 [Kalisch2007] Markus Kalisch and Peter Bhlmann. Estimating
 high-dimensional directed acyclic graphs with the pc-algorithm. In The
@@ -23,8 +21,11 @@ _logger = logging.getLogger(__name__)
 def _create_complete_graph(node_ids):
     """Create a complete graph from the list of node ids.
 
-    @param node_ids: a list of node ids
-    @return an undirected graph (as a networkx.Graph)
+    Args:
+        node_ids: a list of node ids
+
+    Returns:
+        An undirected graph (as a networkx.Graph)
     """
     g = nx.Graph()
     g.add_nodes_from(node_ids)
@@ -36,15 +37,19 @@ def _create_complete_graph(node_ids):
 def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
     """Estimate a skeleton graph from the statistis information.
 
-    @param indep_test_func: the function name for a conditional
-      independency test.
-    @param data_matrix: data (as a numpy array).
-      other values may be specified depending on indep_test_func()s.
-    @param alpha: the significance level.
-    @param kwargs: other parameters may be passed depending on the
-      indep_test_func()s.
-    @return g: a skeleton graph (as a networkx.Graph).
-    @return sep_set: a separation set (An 2D-array of set()).
+    Args:
+        indep_test_func: the function name for a conditional
+            independency test.
+        data_matrix: data (as a numpy array).
+        alpha: the significance level.
+        kwargs:
+            'max_reach': maximum value of l (see the code).  The
+                value depends on the underlying distribution.
+            other parameters may be passed depending on the
+                indep_test_func()s.
+    Returns:
+        g: a skeleton graph (as a networkx.Graph).
+        sep_set: a separation set (as an 2D-array of set()).
     """
     node_ids = range(data_matrix.shape[1])
     g = _create_complete_graph(node_ids)
@@ -70,9 +75,10 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
                 for k in combinations(adj_i, l):
                     _logger.debug('indep prob of %s and %s with subset %s'
                                   % (i, j, str(k)))
-                    prob = indep_test_func(data_matrix, i, j, set(k), **kwargs)
-                    _logger.debug('prob is %s' % str(prob))
-                    if prob > alpha:
+                    p_val = indep_test_func(data_matrix, i, j, set(k),
+                                            **kwargs)
+                    _logger.debug('p_val is %s' % str(p_val))
+                    if p_val > alpha:
                         if g.has_edge(i, j):
                             _logger.debug('remove edge (%s, %s)' % (i, j))
                             g.remove_edge(i, j)
@@ -97,10 +103,14 @@ def estimate_cpdag(skel_graph, sep_set):
     """Estimate a CPDAG from the skeleton graph and separation sets
     returned by the estimate_skeleton() function.
 
-    @param skel_graph: A skeleton graph (an undirected networkx.Graph).
-    @param sep_set: An 2D-array of separation set.
-      The contents look like something sep_set[i][j] = set([k, l, m]).
-    @return dag: An estimated DAG.
+    Args:
+        skel_graph: A skeleton graph (an undirected networkx.Graph).
+        sep_set: An 2D-array of separation set.
+            The contents look like something like below.
+                sep_set[i][j] = set([k, l, m])
+
+    Returns:
+        An estimated DAG.
     """
     dag = skel_graph.to_directed()
     node_ids = skel_graph.nodes()
@@ -132,7 +142,7 @@ def estimate_cpdag(skel_graph, sep_set):
         return ((dag.has_edge(i, j) and (not dag.has_edge(j, i))) or
                 (not dag.has_edge(i, j)) and dag.has_edge(j, i))
 
-    def has_no_edge(dag, i, j):
+    def _has_no_edge(dag, i, j):
         return (not dag.has_edge(i, j)) and (not dag.has_edge(j, i))
 
     # For all the combination of nodes i and j, apply the following
@@ -210,8 +220,11 @@ def estimate_cpdag(skel_graph, sep_set):
                 pass
             pass
 
-        #R4
-            
+        # Rule 4: Orient i-j into i->j whenever there are two chains
+        # i-k->l and k->l->j such that k and j are nonadjacent.
+        #
+        # However, this rule is not necessary when the PC-algorithm
+        # is used to estimate a DAG.
         pass
 
     return dag

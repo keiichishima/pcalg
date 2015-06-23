@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""@module ci_tests
-
-A collection of wrapper functions for G-square conditional independecy
-test functions.
-
+"""A collection of wrapper functions for G-square conditional
+independecy test functions.
 """
 
 from __future__ import print_function
@@ -21,5 +18,10 @@ def bin_ci_test(data_matrix, x, y, s):
     return g_square_bin(x, y, s, data_matrix)
 
 def dis_ci_test(data_matrix, x , y, s, **kwargs):
-    levels = kwargs['levels']
+    levels = []
+    if 'levels' in kwargs:
+        levels = kwargs['levels']
+    else:
+        import numpy as np
+        levels = np.amax(data_matrix, axis=0) + 1
     return g_square_dis(x, y, s, levels, data_matrix)

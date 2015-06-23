@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""@module binary
-
-A conditional independency test function for binary data.
+"""A conditional independency test function for binary data.
 
 The code included in this package is logically copied and pasted from
 the pcalg package for R developed by Markus Kalisch, Alain Hauser,
@@ -26,11 +24,14 @@ _logger = logging.getLogger(__name__)
 def g_square_bin(x, y, s, dm):
     """G square test for a binary data.
 
-    @param x: the first node (as an integer).
-    @param y: the second node (as an integer).
-    @param s: the set of neibouring nodes of x and y (as a set()).
-    @param dm: the data matrix to be used (as a numpy.ndarray).
-    @return p: the probability of conditional independence.
+    Args:
+        x: the first node (as an integer).
+        y: the second node (as an integer).
+        s: the set of neibouring nodes of x and y (as a set()).
+        dm: the data matrix to be used (as a numpy.ndarray).
+
+    Returns:
+        p_val: the p-value of conditional independence.
     """
 
     def _calculate_tlog(x, y, s, dof, dm):
@@ -71,9 +72,11 @@ def g_square_bin(x, y, s, dm):
     row_size = dm.shape[0]
     s_size = len(s)
     dof = int(pow(2, s_size))
+    _logger.debug('dof = %d' % dof)
     if row_size < 10 * dof:
-        _logger.critical('row_size = %d is too small' % row_size)
-        raise ValueError
+        _logger.warning('Not enough samples.  %s is too small.'
+                        % str(row_size))
+        return 1
     nijk = None
     if s_size < 6:
         if s_size == 0:
@@ -147,10 +150,10 @@ def g_square_bin(x, y, s, dm):
     _logger.debug('nijk = %s' % nijk)
     _logger.debug('tlog = %s' % tlog)
     _logger.debug('log(tlog) = %s' % log_tlog)
-    _logger.info('G2 = %f' % G2)
-    ret = chi2.sf(G2, dof)
-    _logger.debug('probability = %s' % str(ret))
-    return ret
+    _logger.debug('G2 = %f' % G2)
+    p_val = chi2.sf(G2, dof)
+    _logger.info('p_val = %s' % str(p_val))
+    return p_val
 
 
 if __name__ == '__main__':
