@@ -8,8 +8,9 @@ high-dimensional directed acyclic graphs with the pc-algorithm. In The
 Journal of Machine Learning Research, Vol. 8, pp. 613-636, 2007.
 
 License: BSD
-
 """
+
+from __future__ import print_function
 
 from itertools import combinations, permutations
 import logging
@@ -57,7 +58,7 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
     node_size = data_matrix.shape[1]
     sep_set = [[set() for i in range(node_size)] for j in range(node_size)]
 
-    l = 1
+    l = 0
     while True:
         cont = False
         for (i, j) in permutations(node_ids, 2):
@@ -80,7 +81,7 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
                     _logger.debug('p_val is %s' % str(p_val))
                     if p_val > alpha:
                         if g.has_edge(i, j):
-                            _logger.debug('remove edge (%s, %s)' % (i, j))
+                            _logger.debug('p: remove edge (%s, %s)' % (i, j))
                             g.remove_edge(i, j)
                             pass
                         sep_set[i][j] |= set(k)
@@ -115,17 +116,21 @@ def estimate_cpdag(skel_graph, sep_set):
     dag = skel_graph.to_directed()
     node_ids = skel_graph.nodes()
     for (i, j) in combinations(node_ids, 2):
-        adj_i = set(skel_graph.neighbors(i))
+        adj_i = set(dag.successors(i))
         if j in adj_i:
             continue
-        adj_j = set(skel_graph.neighbors(j))
+        adj_j = set(dag.successors(j))
+        if i in adj_j:
+            continue
         common_k = adj_i & adj_j
         for k in common_k:
             if k not in sep_set[i][j]:
                 if dag.has_edge(k, i):
+                    _logger.debug('S: remove edge (%s, %s)' % (k, i))
                     dag.remove_edge(k, i)
                     pass
                 if dag.has_edge(k, j):
+                    _logger.debug('S: remove edge (%s, %s)' % (k, i))
                     dag.remove_edge(k, j)
                     pass
                 pass
@@ -162,6 +167,7 @@ def estimate_cpdag(skel_graph, sep_set):
                 if _has_any_edge(dag, k, j):
                     continue
                 # Make i-j into i->j
+                _logger.debug('R1: remove edge (%s, %s)' % (j, i))
                 dag.remove_edge(j, i)
                 pass
             pass
@@ -188,6 +194,7 @@ def estimate_cpdag(skel_graph, sep_set):
             # Check if there is any node k where i->k->j.
             if len(succs_i & preds_j) > 0:
                 # Make i-j into i->j
+                _logger.debug('R2: remove edge (%s, %s)' % (j, i))
                 dag.remove_edge(j, i)
                 pass
             pass
@@ -216,6 +223,7 @@ def estimate_cpdag(skel_graph, sep_set):
                 if dag.has_edge(j, l) or (not dag.has_edge(l, j)):
                     continue
                 # Make i-j into i->j.
+                _logger.debug('R3: remove edge (%s, %s)' % (j, i))
                 dag.remove_edge(j, i)
                 pass
             pass
@@ -228,3 +236,48 @@ def estimate_cpdag(skel_graph, sep_set):
         pass
 
     return dag
+
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+    import networkx as nx
+    import numpy as np
+
+    from gsq.ci_tests import ci_test_bin, ci_test_dis
+    from gsq.gsq_testdata import bin_data, dis_data
+
+    # ch = logging.StreamHandler()
+    # ch.setLevel(logging.DEBUG)
+    # _logger.setLevel(logging.DEBUG)
+    # _logger.addHandler(ch)
+
+    dm = np.array(bin_data).reshape((5000, 5))
+    (g, sep_set) = estimate_skeleton(indep_test_func=ci_test_bin,
+                                     data_matrix=dm,
+                                     alpha=0.01)
+    g = estimate_cpdag(skel_graph=g, sep_set=sep_set)
+    g_answer = nx.DiGraph()
+    g_answer.add_nodes_from([0, 1, 2, 3, 4])
+    g_answer.add_edges_from([(0, 1), (2, 3), (2, 4), (3, 1),
+                             (3, 2), (4, 1), (4, 2)])
+    print('Edges are:', g.edges(), end='')
+    if nx.is_isomorphic(g, g_answer):
+        print(' => GOOD')
+    else:
+        print(' => WRONG')
+        print('True edges should be:', g_answer.edges())
+
+    dm = np.array(dis_data).reshape((10000, 5))
+    (g, sep_set) = estimate_skeleton(indep_test_func=ci_test_dis,
+                                     data_matrix=dm,
+                                     alpha=0.01,
+                                     levels=[3,2,3,4,2])
+    g = estimate_cpdag(skel_graph=g, sep_set=sep_set)
+    g_answer = nx.DiGraph()
+    g_answer.add_nodes_from([0, 1, 2, 3, 4])
+    g_answer.add_edges_from([(0, 2), (1, 2), (1, 3), (4, 3)])
+    print('Edges are:', g.edges(), end='')
+    if nx.is_isomorphic(g, g_answer):
+        print(' => GOOD')
+    else:
+        print(' => WRONG')
+        print('True edges should be:', g_answer.edges())
