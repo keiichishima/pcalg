@@ -20,16 +20,16 @@ import numpy as np
 
 _logger = logging.getLogger(__name__)
 
-def g_square_dis(x, y, s, levels, dm):
+def g_square_dis(dm, x, y, s, levels):
     """G square test for discrete data.
 
     Args:
+        dm: the data matrix to be used (as a numpy.ndarray).
         x: the first node (as an integer).
         y: the second node (as an integer).
         s: the set of neibouring nodes of x and y (as a set()).
         levels: levels of each column in the data matrix
             (as a list()).
-        dm: the data matrix to be used (as a numpy.ndarray).
 
     Returns:
         p_val: the p-value of conditional independence.
@@ -82,7 +82,8 @@ def g_square_dis(x, y, s, levels, dm):
            * np.prod(map(lambda x: levels[x], s)))
     _logger.debug('dof = %d' % dof)
     if row_size < 10 * dof:
-        _logger.warning('Not enough samples.')
+        _logger.warning('Not enough samples. %s is too small.'
+                        % str(row_size))
         return 1
     nijk = None
     if s_size < 5:
@@ -176,7 +177,7 @@ if __name__ == '__main__':
     sets = [[], [2], [2, 3], [3, 4], [2, 3, 4]]
     for idx in range(len(sets)):
         print('x =', x, ', y =', y, ', s =', sets[idx], end='')
-        p = g_square_dis(0, 1, set(sets[idx]), [3,2,3,4,2], dm)
+        p = g_square_dis(dm, 0, 1, set(sets[idx]), [3,2,3,4,2])
         print(', p =', p, end='')
         fr_p = frexp(p)
         fr_a = frexp(gsq_testdata.dis_answer[idx])

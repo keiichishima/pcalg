@@ -21,14 +21,14 @@ import numpy as np
 
 _logger = logging.getLogger(__name__)
 
-def g_square_bin(x, y, s, dm):
+def g_square_bin(dm, x, y, s):
     """G square test for a binary data.
 
     Args:
+        dm: the data matrix to be used (as a numpy.ndarray).
         x: the first node (as an integer).
         y: the second node (as an integer).
         s: the set of neibouring nodes of x and y (as a set()).
-        dm: the data matrix to be used (as a numpy.ndarray).
 
     Returns:
         p_val: the p-value of conditional independence.
@@ -168,7 +168,7 @@ if __name__ == '__main__':
     sets = [[], [2], [2, 3], [3, 4], [2, 3, 4]]
     for idx in range(len(sets)):
         print('x =', x, ', y =', y, ', s =', sets[idx], end='')
-        p = g_square_bin(0, 1, set(sets[idx]), dm)
+        p = g_square_bin(dm, 0, 1, set(sets[idx]))
         print(', p =', p, end='')
         fr_p = frexp(p)
         fr_a = frexp(gsq_testdata.bin_answer[idx])

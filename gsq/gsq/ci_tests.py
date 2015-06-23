@@ -14,14 +14,14 @@ from discrete import g_square_dis
 
 _logger = logging.getLogger(__name__)
 
-def bin_ci_test(data_matrix, x, y, s):
-    return g_square_bin(x, y, s, data_matrix)
+def ci_test_bin(data_matrix, x, y, s):
+    return g_square_bin(data_matrix, x, y, s)
 
-def dis_ci_test(data_matrix, x , y, s, **kwargs):
+def ci_test_dis(data_matrix, x , y, s, **kwargs):
     levels = []
     if 'levels' in kwargs:
         levels = kwargs['levels']
     else:
         import numpy as np
         levels = np.amax(data_matrix, axis=0) + 1
-    return g_square_dis(x, y, s, levels, data_matrix)
+    return g_square_dis(data_matrix, x, y, s, levels)
