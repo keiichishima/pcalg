@@ -257,8 +257,8 @@ if __name__ == '__main__':
     g = estimate_cpdag(skel_graph=g, sep_set=sep_set)
     g_answer = nx.DiGraph()
     g_answer.add_nodes_from([0, 1, 2, 3, 4])
-    g_answer.add_edges_from([(0, 1), (2, 3), (2, 4), (3, 1),
-                             (3, 2), (4, 1), (4, 2)])
+    g_answer.add_edges_from([(0, 1), (2, 3), (3, 2), (3, 1),
+                             (2, 4), (4, 2), (4, 1)])
     print('Edges are:', g.edges(), end='')
     if nx.is_isomorphic(g, g_answer):
         print(' => GOOD')
