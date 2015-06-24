@@ -1,8 +1,0 @@
-README.md
-LICENSE
-setup.py
-gsq/__init__.py
-gsq/binary.py
-gsq/ci_tests.py
-gsq/discrete.py
-gsq/gsq_testdata.py

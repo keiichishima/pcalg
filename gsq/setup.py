@@ -2,7 +2,8 @@
 
 from __future__ import print_function
 
-from distutils.core import setup
+from setuptools import setup
+
 try:
     from pypandoc import convert
     read_md = lambda f: convert(f, 'rst')
@@ -11,13 +12,13 @@ except ImportError:
     read_md = lambda f: open(f, 'r').read()
 
 setup(name='gsq',
-      version='0.1.1',
+      version='0.1.2',
       description='G Square Conditional Independence Test',
       long_description=read_md('README.md'),
       author='Keiichi SHIMA',
       author_email='keiichi@iijlab.net',
       packages=['gsq'],
-      requires=['scipy (>=0.15.1)','numpy (>=1.9.2)'],
+      install_requires=['scipy>=0.15.1','numpy>=1.9.2'],
       classifiers=[
           'Development Status :: 4 - Beta',
           'Environment :: Console',
