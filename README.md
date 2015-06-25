@@ -24,5 +24,5 @@ Journal of Machine Learning Research, Vol. 8, pp. 613-636, 2007.
 ## Author
 
 Keiichi SHIMA
-IIJ Innovation Institute Inc.
-WIDE project
+/ IIJ Innovation Institute Inc.
+/ WIDE project
