@@ -12,7 +12,7 @@ except ImportError:
     read_md = lambda f: open(f, 'r').read()
 
 setup(name='pcalg',
-      version='0.1.3',
+      version='0.1.4',
       description='CPDAG Estimation using PC-Algorithm',
       long_description=read_md('README.md'),
       author='Keiichi SHIMA',
