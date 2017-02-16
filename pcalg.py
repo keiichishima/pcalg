@@ -46,12 +46,22 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
         kwargs:
             'max_reach': maximum value of l (see the code).  The
                 value depends on the underlying distribution.
+            'method': if 'stable' given, use stable-PC algorithm
+                (see [Colombo2014]).
             other parameters may be passed depending on the
                 indep_test_func()s.
     Returns:
         g: a skeleton graph (as a networkx.Graph).
         sep_set: a separation set (as an 2D-array of set()).
+
+    [Colombo2014] Diego Colombo and Marloes H Maathuis. Order-independent
+    constraint-based causal structure learning. In The Journal of Machine
+    Learning Research, Vol. 15, pp. 3741-3782, 2014.
     """
+
+    def method_stable(kwargs):
+        return ('method' in kwargs) and kwargs['method'] == "stable"
+
     node_ids = range(data_matrix.shape[1])
     g = _create_complete_graph(node_ids)
 
@@ -63,11 +73,9 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
         cont = False
         for (i, j) in permutations(node_ids, 2):
             adj_i = g.neighbors(i)
-            if j not in adj_i:
+            if j not in adj_i and not method_stable(kwargs):
                 continue
-            else:
-                adj_i.remove(j)
-                pass
+            adj_i.remove(j)
             if len(adj_i) >= l:
                 _logger.debug('testing %s and %s' % (i,j))
                 _logger.debug('neighbors of %s are %s' % (i, str(adj_i)))
@@ -99,6 +107,7 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
         pass
 
     return (g, sep_set)
+
 
 def estimate_cpdag(skel_graph, sep_set):
     """Estimate a CPDAG from the skeleton graph and separation sets
