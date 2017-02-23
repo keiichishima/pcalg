@@ -73,9 +73,13 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
         cont = False
         for (i, j) in permutations(node_ids, 2):
             adj_i = g.neighbors(i)
-            if j not in adj_i and not method_stable(kwargs):
-                continue
-            adj_i.remove(j)
+            if j not in adj_i:
+                if method_stable(kwargs):
+                    pass
+                else:
+                    continue
+            else:
+                adj_i.remove(j)
             if len(adj_i) >= l:
                 _logger.debug('testing %s and %s' % (i,j))
                 _logger.debug('neighbors of %s are %s' % (i, str(adj_i)))
