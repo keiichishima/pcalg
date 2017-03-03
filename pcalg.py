@@ -116,7 +116,6 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
 
     return (g, sep_set)
 
-
 def estimate_cpdag(skel_graph, sep_set):
     """Estimate a CPDAG from the skeleton graph and separation sets
     returned by the estimate_skeleton() function.
