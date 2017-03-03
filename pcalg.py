@@ -63,9 +63,6 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
     def method_stable(kwargs):
         return ('method' in kwargs) and kwargs['method'] == "stable"
 
-    def arg_verbose(kwargs):
-        return ('method' in kwargs) and kwargs['method'] == True
-
     node_ids = range(data_matrix.shape[1])
     g = _create_complete_graph(node_ids)
 
@@ -75,13 +72,11 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
     l = 0
     while True:
         cont = False
+        remove_edges = []
         for (i, j) in permutations(node_ids, 2):
             adj_i = g.neighbors(i)
             if j not in adj_i:
-                if method_stable(kwargs):
-                    pass
-                else:
-                    continue
+                continue
             else:
                 adj_i.remove(j)
             if len(adj_i) >= l:
@@ -95,13 +90,15 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
                     p_val = indep_test_func(data_matrix, i, j, set(k),
                                             **kwargs)
                     _logger.debug('p_val is %s' % str(p_val))
-                    if arg_verbose(kwargs):
-                        print ("x= {0} y={1} S= {2}: pval= {3}".format(
-                                i, j, str(k), p_val))
+                    print ("x= {0} y={1} S= {2}: pval= {3}".format(
+                            i, j, str(k), p_val))
                     if p_val > alpha:
                         if g.has_edge(i, j):
                             _logger.debug('p: remove edge (%s, %s)' % (i, j))
-                            g.remove_edge(i, j)
+                            if method_stable(kwargs):
+                                remove_edges.append((i, j))
+                            else:
+                                g.remove_edge(i, j)
                             pass
                         sep_set[i][j] |= set(k)
                         sep_set[j][i] |= set(k)
@@ -111,6 +108,8 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
                 pass
             pass
         l += 1
+        if method_stable(kwargs):
+            g.remove_edges_from(remove_edges)
         if cont is False:
             break
         if ('max_reach' in kwargs) and (l > kwargs['max_reach']):
