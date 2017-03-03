@@ -48,6 +48,7 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
                 value depends on the underlying distribution.
             'method': if 'stable' given, use stable-PC algorithm
                 (see [Colombo2014]).
+            'verbose': for debugging
             other parameters may be passed depending on the
                 indep_test_func()s.
     Returns:
@@ -61,6 +62,9 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
 
     def method_stable(kwargs):
         return ('method' in kwargs) and kwargs['method'] == "stable"
+
+    def arg_verbose(kwargs):
+        return ('method' in kwargs) and kwargs['method'] == True
 
     node_ids = range(data_matrix.shape[1])
     g = _create_complete_graph(node_ids)
@@ -91,6 +95,9 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
                     p_val = indep_test_func(data_matrix, i, j, set(k),
                                             **kwargs)
                     _logger.debug('p_val is %s' % str(p_val))
+                    if arg_verbose(kwargs):
+                        print ("x= {0} y={1} S= {2}: pval= {3}".format(
+                                i, j, str(k), p_val))
                     if p_val > alpha:
                         if g.has_edge(i, j):
                             _logger.debug('p: remove edge (%s, %s)' % (i, j))
