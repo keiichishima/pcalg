@@ -46,12 +46,22 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
         kwargs:
             'max_reach': maximum value of l (see the code).  The
                 value depends on the underlying distribution.
+            'method': if 'stable' given, use stable-PC algorithm
+                (see [Colombo2014]).
             other parameters may be passed depending on the
                 indep_test_func()s.
     Returns:
         g: a skeleton graph (as a networkx.Graph).
         sep_set: a separation set (as an 2D-array of set()).
+
+    [Colombo2014] Diego Colombo and Marloes H Maathuis. Order-independent
+    constraint-based causal structure learning. In The Journal of Machine
+    Learning Research, Vol. 15, pp. 3741-3782, 2014.
     """
+
+    def method_stable(kwargs):
+        return ('method' in kwargs) and kwargs['method'] == "stable"
+
     node_ids = range(data_matrix.shape[1])
     g = _create_complete_graph(node_ids)
 
@@ -61,6 +71,7 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
     l = 0
     while True:
         cont = False
+        remove_edges = []
         for (i, j) in permutations(node_ids, 2):
             adj_i = g.neighbors(i)
             if j not in adj_i:
@@ -82,7 +93,10 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
                     if p_val > alpha:
                         if g.has_edge(i, j):
                             _logger.debug('p: remove edge (%s, %s)' % (i, j))
-                            g.remove_edge(i, j)
+                            if method_stable(kwargs):
+                                remove_edges.append((i, j))
+                            else:
+                                g.remove_edge(i, j)
                             pass
                         sep_set[i][j] |= set(k)
                         sep_set[j][i] |= set(k)
@@ -92,6 +106,8 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
                 pass
             pass
         l += 1
+        if method_stable(kwargs):
+            g.remove_edges_from(remove_edges)
         if cont is False:
             break
         if ('max_reach' in kwargs) and (l > kwargs['max_reach']):
