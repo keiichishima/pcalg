@@ -15,6 +15,10 @@ The source code is available at https://github.com/keiichishima/pcalg
 
 Please submit bug reports or patches through the GitHub interface.
 
+## Contributors
+
+- Satoru Kobayashi, https://github.com/cpflat
+
 ## References
 
 [Kalisch2007] Markus Kalisch and Peter Bhlmann. Estimating

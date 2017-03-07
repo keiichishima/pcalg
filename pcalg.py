@@ -254,7 +254,6 @@ def estimate_cpdag(skel_graph, sep_set):
     return dag
 
 if __name__ == '__main__':
-    import matplotlib.pyplot as plt
     import networkx as nx
     import numpy as np
 
