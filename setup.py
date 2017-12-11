@@ -12,13 +12,14 @@ except ImportError:
     read_md = lambda f: open(f, 'r').read()
 
 setup(name='pcalg',
-      version='0.1.5',
+      version='0.1.6',
       description='CPDAG Estimation using PC-Algorithm',
       long_description=read_md('README.md'),
       author='Keiichi SHIMA',
       author_email='keiichi@iijlab.net',
+      url='https://github.com/keiichishima/pcalg/',
       py_modules=['pcalg'],
-      install_requires=['networkx>=1.11', 'gsq>=0.1.6'],
+      install_requires=['networkx>=2.0', 'gsq>=0.1.6'],
       classifiers=[
           'Development Status :: 4 - Beta',
           'Environment :: Console',
