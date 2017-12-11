@@ -73,7 +73,7 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
         cont = False
         remove_edges = []
         for (i, j) in permutations(node_ids, 2):
-            adj_i = g.neighbors(i)
+            adj_i = list(g.neighbors(i))
             if j not in adj_i:
                 continue
             else:
