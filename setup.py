@@ -17,6 +17,7 @@ setup(name='pcalg',
       long_description=read_md('README.md'),
       author='Keiichi SHIMA',
       author_email='keiichi@iijlab.net',
+      url='https://github.com/keiichishima/pcalg/',
       py_modules=['pcalg'],
       install_requires=['networkx>=2.0', 'gsq>=0.1.6'],
       classifiers=[
