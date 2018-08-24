@@ -48,6 +48,9 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
                 value depends on the underlying distribution.
             'method': if 'stable' given, use stable-PC algorithm
                 (see [Colombo2014]).
+            'init_graph': initial structure of skeleton graph
+                (as a networkx.Graph). If not specified,
+                a complete graph is used.
             other parameters may be passed depending on the
                 indep_test_func()s.
     Returns:
@@ -63,7 +66,16 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
         return ('method' in kwargs) and kwargs['method'] == "stable"
 
     node_ids = range(data_matrix.shape[1])
-    g = _create_complete_graph(node_ids)
+    if 'init_graph' in kwargs:
+        g = kwargs['init_graph']
+        if not isinstance(g, nx.Graph):
+            raise ValueError
+        elif not g.number_of_nodes() == len(node_ids):
+            raise ValueError('init_graph not matching data_matrix shape')
+        pass
+    else:
+        g = _create_complete_graph(node_ids)
+    pass
 
     node_size = data_matrix.shape[1]
     sep_set = [[set() for i in range(node_size)] for j in range(node_size)]
