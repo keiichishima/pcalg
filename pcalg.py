@@ -224,7 +224,7 @@ def estimate_cpdag(skel_graph, sep_set):
                 # Make i-j into i->j
                 _logger.debug('R2: remove edge (%s, %s)' % (j, i))
                 dag.remove_edge(j, i)
-                break
+                pass
             pass
 
         # Rule 3: Orient i-j into i->j whenever there are two chains
