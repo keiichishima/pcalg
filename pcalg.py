@@ -32,7 +32,6 @@ def _create_complete_graph(node_ids):
     g.add_nodes_from(node_ids)
     for (i, j) in combinations(node_ids, 2):
         g.add_edge(i, j)
-        pass
     return g
 
 def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
@@ -72,10 +71,8 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
             raise ValueError
         elif not g.number_of_nodes() == len(node_ids):
             raise ValueError('init_graph not matching data_matrix shape')
-        pass
     else:
         g = _create_complete_graph(node_ids)
-    pass
 
     node_size = data_matrix.shape[1]
     sep_set = [[set() for i in range(node_size)] for j in range(node_size)]
@@ -90,7 +87,6 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
                 continue
             else:
                 adj_i.remove(j)
-                pass
             if len(adj_i) >= l:
                 _logger.debug('testing %s and %s' % (i,j))
                 _logger.debug('neighbors of %s are %s' % (i, str(adj_i)))
@@ -109,14 +105,10 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
                                 remove_edges.append((i, j))
                             else:
                                 g.remove_edge(i, j)
-                            pass
                         sep_set[i][j] |= set(k)
                         sep_set[j][i] |= set(k)
                         break
-                    pass
                 cont = True
-                pass
-            pass
         l += 1
         if method_stable(kwargs):
             g.remove_edges_from(remove_edges)
@@ -124,7 +116,6 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
             break
         if ('max_reach' in kwargs) and (l > kwargs['max_reach']):
             break
-        pass
 
     return (g, sep_set)
 
@@ -156,14 +147,9 @@ def estimate_cpdag(skel_graph, sep_set):
                 if dag.has_edge(k, i):
                     _logger.debug('S: remove edge (%s, %s)' % (k, i))
                     dag.remove_edge(k, i)
-                    pass
                 if dag.has_edge(k, j):
                     _logger.debug('S: remove edge (%s, %s)' % (k, j))
                     dag.remove_edge(k, j)
-                    pass
-                pass
-            pass
-        pass
 
     def _has_both_edges(dag, i, j):
         return dag.has_edge(i, j) and dag.has_edge(j, i)
@@ -200,7 +186,6 @@ def estimate_cpdag(skel_graph, sep_set):
                     _logger.debug('R1: remove edge (%s, %s)' % (j, i))
                     dag.remove_edge(j, i)
                     break
-                pass
 
             # Rule 2: Orient i-j into i->j whenever there is a chain
             # i->k->j.
@@ -212,22 +197,16 @@ def estimate_cpdag(skel_graph, sep_set):
                 for k in dag.successors(i):
                     if not dag.has_edge(k, i):
                         succs_i.add(k)
-                        pass
-                    pass
                 # Find nodes j where j is k->j.
                 preds_j = set()
                 for k in dag.predecessors(j):
                     if not dag.has_edge(j, k):
                         preds_j.add(k)
-                        pass
-                    pass
                 # Check if there is any node k where i->k->j.
                 if len(succs_i & preds_j) > 0:
                     # Make i-j into i->j
                     _logger.debug('R2: remove edge (%s, %s)' % (j, i))
                     dag.remove_edge(j, i)
-                    pass
-                pass
 
             # Rule 3: Orient i-j into i->j whenever there are two chains
             # i-k->j and i-l->j such that k and l are nonadjacent.
@@ -239,8 +218,6 @@ def estimate_cpdag(skel_graph, sep_set):
                 for k in dag.successors(i):
                     if dag.has_edge(k, i):
                         adj_i.add(k)
-                        pass
-                    pass
                 # For all the pairs of nodes in adj_i,
                 for (k, l) in combinations(adj_i, 2):
                     # Skip if k and l are adjacent.
@@ -256,14 +233,12 @@ def estimate_cpdag(skel_graph, sep_set):
                     _logger.debug('R3: remove edge (%s, %s)' % (j, i))
                     dag.remove_edge(j, i)
                     break
-                pass
 
             # Rule 4: Orient i-j into i->j whenever there are two chains
             # i-k->l and k->l->j such that k and j are nonadjacent.
             #
             # However, this rule is not necessary when the PC-algorithm
             # is used to estimate a DAG.
-            pass
 
         if nx.is_isomorphic(dag, old_dag):
             break
