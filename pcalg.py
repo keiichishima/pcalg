@@ -180,88 +180,94 @@ def estimate_cpdag(skel_graph, sep_set):
 
     # For all the combination of nodes i and j, apply the following
     # rules.
-    for (i, j) in combinations(node_ids, 2):
-        # Rule 1: Orient i-j into i->j whenever there is an arrow k->i
-        # such that k and j are nonadjacent.
-        #
-        # Check if i-j.
-        if _has_both_edges(dag, i, j):
-            # Look all the predecessors of i.
-            for k in dag.predecessors(i):
-                # Skip if there is an arrow i->k.
-                if dag.has_edge(i, k):
-                    continue
-                # Skip if k and j are adjacent.
-                if _has_any_edge(dag, k, j):
-                    continue
-                # Make i-j into i->j
-                _logger.debug('R1: remove edge (%s, %s)' % (j, i))
-                dag.remove_edge(j, i)
-                break
-            pass
+    old_dag = dag.copy()
+    while True:
+        for (i, j) in combinations(node_ids, 2):
+            # Rule 1: Orient i-j into i->j whenever there is an arrow k->i
+            # such that k and j are nonadjacent.
+            #
+            # Check if i-j.
+            if _has_both_edges(dag, i, j):
+                # Look all the predecessors of i.
+                for k in dag.predecessors(i):
+                    # Skip if there is an arrow i->k.
+                    if dag.has_edge(i, k):
+                        continue
+                    # Skip if k and j are adjacent.
+                    if _has_any_edge(dag, k, j):
+                        continue
+                    # Make i-j into i->j
+                    _logger.debug('R1: remove edge (%s, %s)' % (j, i))
+                    dag.remove_edge(j, i)
+                    break
+                pass
 
-        # Rule 2: Orient i-j into i->j whenever there is a chain
-        # i->k->j.
-        #
-        # Check if i-j.
-        if _has_both_edges(dag, i, j):
-            # Find nodes k where k is i->k.
-            succs_i = set()
-            for k in dag.successors(i):
-                if not dag.has_edge(k, i):
-                    succs_i.add(k)
+            # Rule 2: Orient i-j into i->j whenever there is a chain
+            # i->k->j.
+            #
+            # Check if i-j.
+            if _has_both_edges(dag, i, j):
+                # Find nodes k where k is i->k.
+                succs_i = set()
+                for k in dag.successors(i):
+                    if not dag.has_edge(k, i):
+                        succs_i.add(k)
+                        pass
+                    pass
+                # Find nodes j where j is k->j.
+                preds_j = set()
+                for k in dag.predecessors(j):
+                    if not dag.has_edge(j, k):
+                        preds_j.add(k)
+                        pass
+                    pass
+                # Check if there is any node k where i->k->j.
+                if len(succs_i & preds_j) > 0:
+                    # Make i-j into i->j
+                    _logger.debug('R2: remove edge (%s, %s)' % (j, i))
+                    dag.remove_edge(j, i)
                     pass
                 pass
-            # Find nodes j where j is k->j.
-            preds_j = set()
-            for k in dag.predecessors(j):
-                if not dag.has_edge(j, k):
-                    preds_j.add(k)
+
+            # Rule 3: Orient i-j into i->j whenever there are two chains
+            # i-k->j and i-l->j such that k and l are nonadjacent.
+            #
+            # Check if i-j.
+            if _has_both_edges(dag, i, j):
+                # Find nodes k where i-k.
+                adj_i = set()
+                for k in dag.successors(i):
+                    if dag.has_edge(k, i):
+                        adj_i.add(k)
+                        pass
                     pass
+                # For all the pairs of nodes in adj_i,
+                for (k, l) in combinations(adj_i, 2):
+                    # Skip if k and l are adjacent.
+                    if _has_any_edge(dag, k, l):
+                        continue
+                    # Skip if not k->j.
+                    if dag.has_edge(j, k) or (not dag.has_edge(k, j)):
+                        continue
+                    # Skip if not l->j.
+                    if dag.has_edge(j, l) or (not dag.has_edge(l, j)):
+                        continue
+                    # Make i-j into i->j.
+                    _logger.debug('R3: remove edge (%s, %s)' % (j, i))
+                    dag.remove_edge(j, i)
+                    break
                 pass
-            # Check if there is any node k where i->k->j.
-            if len(succs_i & preds_j) > 0:
-                # Make i-j into i->j
-                _logger.debug('R2: remove edge (%s, %s)' % (j, i))
-                dag.remove_edge(j, i)
-                pass
+
+            # Rule 4: Orient i-j into i->j whenever there are two chains
+            # i-k->l and k->l->j such that k and j are nonadjacent.
+            #
+            # However, this rule is not necessary when the PC-algorithm
+            # is used to estimate a DAG.
             pass
 
-        # Rule 3: Orient i-j into i->j whenever there are two chains
-        # i-k->j and i-l->j such that k and l are nonadjacent.
-        #
-        # Check if i-j.
-        if _has_both_edges(dag, i, j):
-            # Find nodes k where i-k.
-            adj_i = set()
-            for k in dag.successors(i):
-                if dag.has_edge(k, i):
-                    adj_i.add(k)
-                    pass
-                pass
-            # For all the pairs of nodes in adj_i,
-            for (k, l) in combinations(adj_i, 2):
-                # Skip if k and l are adjacent.
-                if _has_any_edge(dag, k, l):
-                    continue
-                # Skip if not k->j.
-                if dag.has_edge(j, k) or (not dag.has_edge(k, j)):
-                    continue
-                # Skip if not l->j.
-                if dag.has_edge(j, l) or (not dag.has_edge(l, j)):
-                    continue
-                # Make i-j into i->j.
-                _logger.debug('R3: remove edge (%s, %s)' % (j, i))
-                dag.remove_edge(j, i)
-                break
-            pass
-
-        # Rule 4: Orient i-j into i->j whenever there are two chains
-        # i-k->l and k->l->j such that k and j are nonadjacent.
-        #
-        # However, this rule is not necessary when the PC-algorithm
-        # is used to estimate a DAG.
-        pass
+        if nx.is_isomorphic(dag, old_dag):
+            break
+        old_dag = dag.copy()
 
     return dag
 
