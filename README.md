@@ -18,6 +18,8 @@ Please submit bug reports or patches through the GitHub interface.
 ## Contributors
 
 - Satoru Kobayashi, https://github.com/cpflat
+- basilnsaeed, https://github.com/basilnsaeed
+- Dr. Georg M. Goerg
 
 ## References
 
