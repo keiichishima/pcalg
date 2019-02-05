@@ -65,17 +65,20 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
         return ('method' in kwargs) and kwargs['method'] == "stable"
 
     node_ids = range(data_matrix.shape[1])
+    node_size = data_matrix.shape[1]
+    sep_set = [[set() for i in range(node_size)] for j in range(node_size)]
     if 'init_graph' in kwargs:
         g = kwargs['init_graph']
         if not isinstance(g, nx.Graph):
             raise ValueError
         elif not g.number_of_nodes() == len(node_ids):
             raise ValueError('init_graph not matching data_matrix shape')
+        for (i, j) in combinations(node_ids, 2):
+            if not g.has_edge(i, j):
+                sep_set[i][j] = None
+                sep_set[j][i] = None
     else:
         g = _create_complete_graph(node_ids)
-
-    node_size = data_matrix.shape[1]
-    sep_set = [[set() for i in range(node_size)] for j in range(node_size)]
 
     l = 0
     while True:
@@ -140,6 +143,8 @@ def estimate_cpdag(skel_graph, sep_set):
             continue
         adj_j = set(dag.successors(j))
         if i in adj_j:
+            continue
+        if sep_set[i][j] is None:
             continue
         common_k = adj_i & adj_j
         for k in common_k:
