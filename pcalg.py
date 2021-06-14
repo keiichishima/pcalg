@@ -50,6 +50,9 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
             'init_graph': initial structure of skeleton graph
                 (as a networkx.Graph). If not specified,
                 a complete graph is used.
+            'fixed_edges': Undirected edges marked here are not changed
+                (as a networkx.Graph). If not specified,
+                an empty graph is used.
             other parameters may be passed depending on the
                 indep_test_func()s.
     Returns:
@@ -80,11 +83,25 @@ def estimate_skeleton(indep_test_func, data_matrix, alpha, **kwargs):
     else:
         g = _create_complete_graph(node_ids)
 
+    fixed_edges = set()
+    if 'fixed_edges' in kwargs:
+        _fixed_edges = kwargs['fixed_edges']
+        if not isinstance(_fixed_edges, nx.Graph):
+            raise ValueError
+        if not _fixed_edges.number_of_nodes() == len(node_ids):
+            raise ValueError('fixed_edges not matching data_matrix shape')
+        for (i, j) in _fixed_edges.edges:
+            fixed_edges.add((i, j))
+            fixed_edges.add((j, i))
+
     l = 0
     while True:
         cont = False
         remove_edges = []
         for (i, j) in permutations(node_ids, 2):
+            if (i, j) in fixed_edges:
+                continue
+
             adj_i = list(g.neighbors(i))
             if j not in adj_i:
                 continue
