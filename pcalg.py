@@ -190,7 +190,7 @@ def estimate_cpdag(skel_graph, sep_set):
     # rules.
     old_dag = dag.copy()
     while True:
-        for (i, j) in combinations(node_ids, 2):
+        for (i, j) in permutations(node_ids, 2):
             # Rule 1: Orient i-j into i->j whenever there is an arrow k->i
             # such that k and j are nonadjacent.
             #
