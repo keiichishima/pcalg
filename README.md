@@ -21,7 +21,7 @@ Please submit bug reports or patches through the GitHub interface.
 - basilnsaeed, https://github.com/basilnsaeed
 - Dr. Georg M. Goerg
 - limjcst, https://github.com/limjcst
-- ElementAI, https://github.com/ElementAI
+- Alexandre Drouin, https://github.com/aldro61
 
 ## References
 
